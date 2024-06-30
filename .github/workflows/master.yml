@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2024 Intel Corporation
+# Copyright 2024 Kyunghee University
 
 name: Master workflow
 on:
@@ -17,7 +18,7 @@ jobs:
         with:
           go-version-file: 'go.mod'
       - name: Build
-        run: go build -o build/_output/onos-rsm ./cmd/onos-rsm
+        run: make build
 
   lint:
     runs-on: ubuntu-latest
@@ -39,10 +40,8 @@ jobs:
         with:
           go-version-file: 'go.mod'
       - name: Unit tests
-        run: |
-          go test -race github.com/onosproject/onos-rsm/pkg/...
-          go test -race github.com/onosproject/onos-rsm/cmd/...
-
+        run: make test
+        
   docker-build:
     runs-on: ubuntu-latest
     steps:
@@ -51,12 +50,7 @@ jobs:
         with:
           go-version-file: 'go.mod'
       - name: Build Docker image
-        run: |
-          git clone https://github.com/onosproject/build-tools.git build/build-tools
-          go mod vendor
-          docker build . -f build/onos-rsm/Dockerfile \
-                  -t onosproject/onos-rsm:latest
-          rm -rf vendor
+        run: make images
 
   license-check:
     runs-on: ubuntu-latest
